@@ -1,4 +1,4 @@
-# dtecht-AD
+# AD Audit Scanner
 
 Read-only PowerShell AD audit scanners, modeled on PingCastle's health-check rules and `--scanner` modules. No module dependencies (uses `System.DirectoryServices` and netapi32), Windows PowerShell 5.1 or PowerShell 7 on Windows.
 
