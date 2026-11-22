@@ -1,4 +1,4 @@
-# PSScriptAnalyzer settings for dtecht-AD (used by build/Publish-Gallery.ps1 and editors).
+# PSScriptAnalyzer settings for AD-Audit (used by build/Publish-Gallery.ps1 and editors).
 # The PowerShell Gallery blocks only on Error-severity findings; these warnings are excluded on purpose:
 @{
     ExcludeRules = @(

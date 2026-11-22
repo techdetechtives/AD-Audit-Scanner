@@ -1,3 +1,3 @@
-63f83d4a02f43b37f870767e32317eabfcf22189395a0d71c623fc352288477f  dtecht-AD.ps1
-78f77f445cda56099aa5d8a0ed141e5d1cc1845b6bc7eee2c05d78b1e9bc8ebe  dtecht-AD/dtecht-AD.psm1
-74304289df9095afddcfbd9e799f51f62d1fc8f37e1d4a0bb8307fd8082f1989  dtecht-AD/dtecht-AD.psd1
+28847fd62f5e14bfaf35bd98b44c085e2965c96102d290ddbf6c20b9ec3546e9  AD-Audit.ps1
+fe7bf57c52c468ff411b204449be3c93d90b20e9cb64c6fc475e28507430124b  AD-Audit/AD-Audit.psm1
+37efba05a1a612f593bb6bfbd5530dff4ba7e2ecda682c32990bed67e06dde86  AD-Audit/AD-Audit.psd1

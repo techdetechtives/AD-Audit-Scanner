@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Static read-only guard for dtecht-AD. Fails (exit 1) if any script could write to
+    Static read-only guard for AD-Audit. Fails (exit 1) if any script could write to
     AD, a DC, a scanned host or the registry.
 
 .DESCRIPTION
@@ -36,7 +36,7 @@ function Fail([string]$File, $Extent, [string]$Why) {
     $failures.Add(('{0}:{1}  {2}' -f $File, $line, $Why))
 }
 
-$packaged = @('dtecht-AD.ps1', 'dtecht-AD.psm1')            # build output = all sources inline
+$packaged = @('AD-Audit.ps1', 'AD-Audit.psm1')            # build output = all sources inline
 
 # ---- 1. Command allowlist ----
 $readOnlyCommands = @(
@@ -48,7 +48,7 @@ $readOnlyCommands = @(
     'Out-Host', 'Out-Null', 'Out-String', 'Format-Table', 'Start-Sleep'
 )
 # Runner/module-only: opens the local report (-OpenReport) and exports the module command
-$runnerOnlyCommands = @{ 'Invoke-Item' = @('Invoke-ADAudit.ps1'); 'Set-Alias' = @('dtecht-AD.psm1'); 'Export-ModuleMember' = @('dtecht-AD.psm1') }
+$runnerOnlyCommands = @{ 'Invoke-Item' = @('Invoke-ADAudit.ps1'); 'Set-Alias' = @('AD-Audit.psm1'); 'Export-ModuleMember' = @('AD-Audit.psm1') }
 $localWriteCommands = @('New-Item', 'Export-Csv', 'Out-File')   # report output only
 $localWriteAllowedIn = @('Invoke-ADAudit.ps1')
 $toolPrefixes = '-ADAudit'
