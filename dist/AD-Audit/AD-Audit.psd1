@@ -15,9 +15,9 @@
     PrivateData          = @{
         PSData = @{
             Tags         = @('ActiveDirectory', 'Security', 'Audit', 'BlueTeam', 'PingCastle', 'DCSync', 'Windows', 'PSEdition_Desktop', 'PSEdition_Core')
-            LicenseUri   = 'https://github.com/techdetechtives/AD-Audit-scanner/blob/main/LICENSE'
-            ProjectUri   = 'https://github.com/techdetechtives/AD-Audit-scanner'
-            ReleaseNotes = 'Read-only AD audit. Run: ad-audit -Preset ADOnly -OpenReport. Changes: https://github.com/techdetechtives/AD-Audit-scanner/commits/main'
+            LicenseUri   = 'https://github.com/techdetechtives/AD-Audit-Scanner/blob/main/LICENSE'
+            ProjectUri   = 'https://github.com/techdetechtives/AD-Audit-Scanner'
+            ReleaseNotes = 'Read-only AD audit. Run: ad-audit -Preset ADOnly -OpenReport. Changes: https://github.com/techdetechtives/AD-Audit-Scanner/commits/main'
         }
     }
 }

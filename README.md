@@ -62,7 +62,7 @@ powershell -ExecutionPolicy Bypass -File .\AD-Audit.ps1 -Preset ADOnly -OpenRepo
 
 ```powershell
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
-irm https://raw.githubusercontent.com/techdetechtives/AD-Audit-scanner/main/dist/AD-Audit.ps1 -OutFile AD-Audit.ps1
+irm https://raw.githubusercontent.com/techdetechtives/AD-Audit-Scanner/main/dist/AD-Audit.ps1 -OutFile AD-Audit.ps1
 (Get-FileHash .\AD-Audit.ps1).Hash      # compare with dist/SHA256SUMS
 powershell -ExecutionPolicy Bypass -File .\AD-Audit.ps1 -Preset ADOnly -OpenReport
 ```
