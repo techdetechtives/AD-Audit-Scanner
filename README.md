@@ -6,11 +6,11 @@ Read-only PowerShell AD audit scanners, modeled on PingCastle's health-check rul
 
 The simplest way, no install needed:
 
-1. Copy **`dist/dtecht-AD.ps1`** to any domain-joined Windows machine.
+1. Copy **`dist/AD-Audit.ps1`** to any domain-joined Windows machine.
 2. Open PowerShell in that folder and run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\dtecht-AD.ps1 -Preset ADOnly -OpenReport
+powershell -ExecutionPolicy Bypass -File .\AD-Audit.ps1 -Preset ADOnly -OpenReport
 ```
 
 The report opens when the run finishes. All results are saved in a new `ADAudit-<date>` folder next to the script.
@@ -19,10 +19,10 @@ The report opens when the run finishes. All results are saved in a new `ADAudit-
 
 | You want | Command |
 |---|---|
-| AD checks only (safest, nothing sent to member computers) | `.\dtecht-AD.ps1 -Preset ADOnly -OpenReport` |
-| Everything | `.\dtecht-AD.ps1 -OpenReport` |
-| Only the domain controllers | `.\dtecht-AD.ps1 -Preset DCsOnly -OpenReport` |
-| What changed since last time | `.\dtecht-AD.ps1 -Preset ADOnly -Baseline .\ADAudit-20261104-1200` |
+| AD checks only (safest, nothing sent to member computers) | `.\AD-Audit.ps1 -Preset ADOnly -OpenReport` |
+| Everything | `.\AD-Audit.ps1 -OpenReport` |
+| Only the domain controllers | `.\AD-Audit.ps1 -Preset DCsOnly -OpenReport` |
+| What changed since last time | `.\AD-Audit.ps1 -Preset ADOnly -Baseline .\ADAudit-20261104-1200` |
 
 **What you get in the report folder:**
 
@@ -31,7 +31,7 @@ The report opens when the run finishes. All results are saved in a new `ADAudit-
 
 Run it as a normal domain user; that's enough for the ADOnly run. It only reads, so nothing in AD or on any computer is changed.
 
-Once the module is on the PowerShell Gallery, you can skip the file copy: run `Install-Module dtecht-AD` once, then just `dtecht-ad -Preset ADOnly -OpenReport`.
+Once the module is on the PowerShell Gallery, you can skip the file copy: run `Install-Module AD-Audit` once, then just `ad-audit -Preset ADOnly -OpenReport`.
 
 **Read-only: nothing is written to Active Directory, DCs or scanned hosts.** The only files written are the reports in `-OutputPath`, which must be a local folder.
 
@@ -52,33 +52,33 @@ Side effects that every authenticated read causes: logon/Kerberos events on DCs 
 
 Pick one. All three run the same tool; parameters are identical.
 
-**1. One file (easiest, works offline).** Copy `dist/dtecht-AD.ps1` to a domain-joined machine and run:
+**1. One file (easiest, works offline).** Copy `dist/AD-Audit.ps1` to a domain-joined machine and run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\dtecht-AD.ps1 -Preset ADOnly -OpenReport
+powershell -ExecutionPolicy Bypass -File .\AD-Audit.ps1 -Preset ADOnly -OpenReport
 ```
 
 **2. Download and run (machine with internet access):**
 
 ```powershell
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
-irm https://raw.githubusercontent.com/techdetechtives/dtecht-AD/main/dist/dtecht-AD.ps1 -OutFile dtecht-AD.ps1
-(Get-FileHash .\dtecht-AD.ps1).Hash      # compare with dist/SHA256SUMS
-powershell -ExecutionPolicy Bypass -File .\dtecht-AD.ps1 -Preset ADOnly -OpenReport
+irm https://raw.githubusercontent.com/techdetechtives/AD-Audit-Scanner/main/dist/AD-Audit.ps1 -OutFile AD-Audit.ps1
+(Get-FileHash .\AD-Audit.ps1).Hash      # compare with dist/SHA256SUMS
+powershell -ExecutionPolicy Bypass -File .\AD-Audit.ps1 -Preset ADOnly -OpenReport
 ```
 
-**3. PowerShell module.** Copy the `dist/dtecht-AD` folder into a module path (e.g. `C:\Program Files\WindowsPowerShell\Modules`), then from any prompt:
+**3. PowerShell module.** Copy the `dist/AD-Audit` folder into a module path (e.g. `C:\Program Files\WindowsPowerShell\Modules`), then from any prompt:
 
 ```powershell
-dtecht-ad -Preset ADOnly -OpenReport          # dtecht-ad is an alias of Invoke-DtechtAD
-Get-Help Invoke-DtechtAD -Full
+ad-audit -Preset ADOnly -OpenReport          # ad-audit is an alias of Invoke-ADAudit
+Get-Help Invoke-ADAudit -Full
 ```
 
 **4. From the PowerShell Gallery** (once published):
 
 ```powershell
-Install-Module dtecht-AD -Scope CurrentUser
-dtecht-ad -Preset ADOnly -OpenReport
+Install-Module AD-Audit -Scope CurrentUser
+ad-audit -Preset ADOnly -OpenReport
 ```
 
 From a clone of this repo, `.\Invoke-ADAudit.ps1` works the same way.
@@ -95,11 +95,11 @@ From a clone of this repo, `.\Invoke-ADAudit.ps1` works the same way.
 `-Scanners` overrides the preset. More examples:
 
 ```powershell
-.\dtecht-AD.ps1                                                    # everything
-.\dtecht-AD.ps1 -Preset DCsOnly -EventDays 30                      # DCs, plus 30 days of account/group changes
-.\dtecht-AD.ps1 -Baseline .\ADAudit-20261101-090000               # what changed since that run
-.\dtecht-AD.ps1 -Server dc01.corp.local -Credential (Get-Credential)   # LDAP as another account
-.\dtecht-AD.ps1 -Scanners Smb,Spooler -ComputerName srv01,srv02
+.\AD-Audit.ps1                                                    # everything
+.\AD-Audit.ps1 -Preset DCsOnly -EventDays 30                      # DCs, plus 30 days of account/group changes
+.\AD-Audit.ps1 -Baseline .\ADAudit-20261101-090000               # what changed since that run
+.\AD-Audit.ps1 -Server dc01.corp.local -Credential (Get-Credential)   # LDAP as another account
+.\AD-Audit.ps1 -Scanners Smb,Spooler -ComputerName srv01,srv02
 ```
 
 Output goes to `.\ADAudit-<timestamp>\`:
@@ -188,7 +188,7 @@ A simple routine: run weekly as a scheduled task with `-Baseline` pointing at th
 
 ## Authorized use
 
-Run dtecht-AD only against Active Directory environments you own or are explicitly authorized to audit. Reports contain sensitive data about your domain (admin accounts, permissions, weaknesses), so store and share them accordingly. The `.gitignore` keeps report output out of git.
+Run AD-Audit only against Active Directory environments you own or are explicitly authorized to audit. Reports contain sensitive data about your domain (admin accounts, permissions, weaknesses), so store and share them accordingly. The `.gitignore` keeps report output out of git.
 
 ## License
 
@@ -200,14 +200,14 @@ Edit the sources (`Invoke-ADAudit.ps1`, `lib/`, `Scanners/`), never `dist/`. The
 
 ```powershell
 pwsh -File tests/Test-ReadOnly.ps1        # read-only guard
-pwsh -File build/Build-Package.ps1        # regenerate dist/dtecht-AD.ps1, the module and SHA256SUMS
+pwsh -File build/Build-Package.ps1        # regenerate dist/AD-Audit.ps1, the module and SHA256SUMS
 pwsh -File build/Build-Package.ps1 -Check # fails if dist/ is out of date
 ```
 
 ### Publishing to the PowerShell Gallery (maintainers)
 
 1. Merge to `main`. Version comes from `$meta.Version` in `Invoke-ADAudit.ps1`; bump it and rebuild for every release.
-2. Create an API key at <https://www.powershellgallery.com/account/apikeys>: scope *Push new packages and package versions*, glob pattern `dtecht-AD`, short expiry.
+2. Create an API key at <https://www.powershellgallery.com/account/apikeys>: scope *Push new packages and package versions*, glob pattern `AD-Audit`, short expiry.
 3. On a Windows machine with PowerShell 5.1+ (PSScriptAnalyzer recommended: `Install-Module PSScriptAnalyzer`):
 
 ```powershell

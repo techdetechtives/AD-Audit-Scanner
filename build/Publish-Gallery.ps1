@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Publishes the dtecht-AD module (dist/dtecht-AD) to the PowerShell Gallery.
+    Publishes the AD-Audit module (dist/AD-Audit) to the PowerShell Gallery.
 
 .DESCRIPTION
     Runs every check first and stops on the first failure:
@@ -14,7 +14,7 @@
 
     Without -Publish it stops after the checks (dry run). The API key is only used for the
     upload; it is never written to disk. Get one at https://www.powershellgallery.com/account/apikeys
-    (scope: "Push new packages and package versions", glob pattern: dtecht-AD).
+    (scope: "Push new packages and package versions", glob pattern: AD-Audit).
 
 .EXAMPLE
     .\build\Publish-Gallery.ps1                       # checks only
@@ -32,7 +32,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$moduleDir = Join-Path $root 'dist/dtecht-AD'
+$moduleDir = Join-Path $root 'dist/AD-Audit'
 $psExe = $(if ($PSVersionTable.PSEdition -eq 'Core') { 'pwsh' } else { 'powershell' })
 function Step([string]$Text) { Write-Host "[*] $Text" }
 function Ok([string]$Text) { Write-Host "[+] $Text" -ForegroundColor Green }
@@ -60,7 +60,7 @@ Step 'Running read-only guard'
 if ($LASTEXITCODE -ne 0) { Stop-Publish 'Read-only guard failed.' }
 
 # 4. manifest
-$manifest = Test-ModuleManifest -Path (Join-Path $moduleDir 'dtecht-AD.psd1')
+$manifest = Test-ModuleManifest -Path (Join-Path $moduleDir 'AD-Audit.psd1')
 $version = $manifest.Version.ToString()
 Ok "Manifest: $($manifest.Name) $version, exports $(@($manifest.ExportedCommands.Keys) -join ', ')"
 
@@ -78,8 +78,8 @@ $usePsrg = [bool](Get-Command Publish-PSResource -ErrorAction SilentlyContinue)
 $existing = $null
 $reached = $true
 try {
-    if ($usePsrg) { $existing = Find-PSResource -Name 'dtecht-AD' -Repository $Repository -ErrorAction Stop }
-    else { $existing = Find-Module -Name 'dtecht-AD' -Repository $Repository -ErrorAction Stop }
+    if ($usePsrg) { $existing = Find-PSResource -Name 'AD-Audit' -Repository $Repository -ErrorAction Stop }
+    else { $existing = Find-Module -Name 'AD-Audit' -Repository $Repository -ErrorAction Stop }
 }
 catch {
     # "not found" means first publish; anything else (proxy, TLS, DNS) means we don't know
@@ -90,21 +90,21 @@ catch {
     }
 }
 if ($existing) {
-    if ([version]$existing.Version -ge [version]$version) { Stop-Publish "Gallery already has dtecht-AD $($existing.Version). Bump the version in Invoke-ADAudit.ps1 (`$meta.Version), rebuild and commit." }
+    if ([version]$existing.Version -ge [version]$version) { Stop-Publish "Gallery already has AD-Audit $($existing.Version). Bump the version in Invoke-ADAudit.ps1 (`$meta.Version), rebuild and commit." }
     Ok "Gallery has $($existing.Version) (author: $($existing.Author)); publishing $version"
 }
-elseif ($reached) { Ok "dtecht-AD is not on $Repository yet (first publish; the name will be registered to your account)" }
+elseif ($reached) { Ok "AD-Audit is not on $Repository yet (first publish; the name will be registered to your account)" }
 
-if (-not $Publish) { Ok "Dry run complete. Re-run with -Publish to upload dtecht-AD $version."; exit 0 }
+if (-not $Publish) { Ok "Dry run complete. Re-run with -Publish to upload AD-Audit $version."; exit 0 }
 
 # Upload
 if (-not $ApiKey -and $env:PSGALLERY_API_KEY) { $ApiKey = ConvertTo-SecureString $env:PSGALLERY_API_KEY -AsPlainText -Force }
 if (-not $ApiKey) { $ApiKey = Read-Host 'PowerShell Gallery API key' -AsSecureString }
 $plain = [System.Net.NetworkCredential]::new('', $ApiKey).Password
 try {
-    Step "Publishing dtecht-AD $version to $Repository"
+    Step "Publishing AD-Audit $version to $Repository"
     if ($usePsrg) { Publish-PSResource -Path $moduleDir -Repository $Repository -ApiKey $plain }
     else { Publish-Module -Path $moduleDir -Repository $Repository -NuGetApiKey $plain }
 }
 finally { $plain = $null }
-Ok "Published. Install with: Install-Module dtecht-AD -Scope CurrentUser   (listing: https://www.powershellgallery.com/packages/dtecht-AD/$version)"
+Ok "Published. Install with: Install-Module AD-Audit -Scope CurrentUser   (listing: https://www.powershellgallery.com/packages/AD-Audit/$version)"
